@@ -8,6 +8,8 @@ const harperSaveMessage = require('./services/harper-save-message');
 const harperGetMessages = require('./services/harper-get-messages');
 const leaveRoom = require('./utils/leave-room'); // Add this
 
+
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) {
@@ -51,6 +53,13 @@ const corsOptions = {
 
 
 app.use(cors(corsOptions));
+
+// Middleware para adicionar manualmente o cabeçalho Access-Control-Allow-Origin
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); // ou o seu domínio específico
+  // Adicione outros cabeçalhos que você precisa aqui
+  next();
+});
 
 const server = http.createServer(app); // Add this
 
