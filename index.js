@@ -8,7 +8,49 @@ const harperSaveMessage = require('./services/harper-save-message');
 const harperGetMessages = require('./services/harper-get-messages');
 const leaveRoom = require('./utils/leave-room'); // Add this
 
-app.use(cors()); // Add cors middleware
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) {
+      // Permite solicitações sem cabeçalho Origin (por exemplo, solicitações de mesma origem, clientes não-navegador)
+      callback(null, true);
+    } else if ([
+      'http://localhost:5173',
+      'http://localhost:5173/',
+      'http://localhost:5174',
+      'http://localhost:5174/',
+      'http://localhost:5175',
+      'http://localhost:5175/',
+      'http://localhost:8081/',  
+      'http://localhost:8081',
+      'http://localhost:8000/',  
+      'http://localhost:8000',
+      'https://guerratool.com/',
+      'https://guerratool.com',
+      'https://qr-code-simples-gd.web.app/',
+      'https://qr-code-simples-gd.web.app',
+      'https://gd-companion-fm.web.app',
+      'https://gd-companion-fm.web.app/',
+      'https://gdpayment-mjlrkfgyq9mqzmq5.web.app',
+      'https://gdpayment-mjlrkfgyq9mqzmq5.web.app/',
+      'https://chatprototypegd.web.app/',
+      'https://chatprototypegd.web.app'
+    ].includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'baggage', 'sentry-trace'],
+  exposedHeaders: ['Content-Length', 'X-Knowledge-Count'],
+  credentials: true,
+  maxAge: 3600,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
+
+
+app.use(cors(corsOptions));
 
 const server = http.createServer(app); // Add this
 
