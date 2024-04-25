@@ -79,6 +79,29 @@ let allUsers = []; // All users in current chat room
 io.on('connection', (socket) => {
   console.log(`User connected ${socket.id}`);
 
+ // Evento para lidar com a criação de uma sala de chat individual
+ socket.on('create_individual_chat', (data) => {
+  const { senderId, receiverId } = data;
+  const room = `${senderId}-${receiverId}`;
+
+  // Armazena a sala de chat para futuras referências
+  userRooms[room] = true;
+
+  // Junta os usuários à sala de chat individual
+  socket.join(room);
+});
+
+// Evento para lidar com o envio de uma mensagem para um usuário específico
+socket.on('send_individual_message', (data) => {
+  const { senderId, receiverId, message } = data;
+  const room = `${senderId}-${receiverId}`;
+
+  // Envia a mensagem para a sala de chat individual
+  io.to(room).emit('receive_individual_message', { senderId, message });
+});
+
+
+
   // Add a user to a room
   socket.on('join_room', (data) => {
     const { username, room } = data; // Data sent from client when join_room event emitted
@@ -149,4 +172,4 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(4001, () => 'Server is running on port 4000');
+server.listen(4001, () => 'Server is running on port 4001');
